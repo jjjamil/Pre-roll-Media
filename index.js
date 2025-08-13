@@ -178,3 +178,7 @@ document.addEventListener("visibilitychange", function () {
     handleVideoAutoplay();
   }
 });
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.getElementById("aboutVideo");
+  video.playbackRate = 1.3;
+});

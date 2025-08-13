@@ -58,7 +58,7 @@ body {
   color: white;
 }
 
-.hero-video {
+.hero-image {
   position: absolute;
   top: 0;
   left: 0;
@@ -68,6 +68,10 @@ body {
   /* Fix for iOS 10+ */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
+  background-image: url("https://i.imgur.com/d21fzdi.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-overlay {
@@ -131,15 +135,6 @@ body {
 .creator-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(255, 62, 0, 0.1);
-}
-
-/* Carousel */
-.carousel-container {
-  position: relative;
-  max-width: 100%;
-  overflow: hidden;
-  background: #000000;
-  padding: 1.5rem 0;
 }
 
 .carousel-track {
@@ -225,6 +220,17 @@ body {
   justify-content: center;
   background: rgba(126, 254, 3, 0.1);
   border-radius: 50%;
+}
+
+.custom-rect-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  aspect-ratio: 3/2;
+  border-radius: 16px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
 }
 
 .industry-icon {
