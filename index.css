@@ -514,3 +514,35 @@ section {
     max-width: 1320px;
   }
 }
+
+/* Platform Icons Styling */
+.platform-icon {
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.platform-icon:hover {
+  transform: translateY(-5px) scale(1.1);
+}
+
+.platform-name {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .platform-icon i {
+    font-size: 2.5rem !important;
+  }
+  .platform-name {
+    font-size: 0.8rem;
+  }
+}
+
+#whyWorkWithUs {
+  color: white;
+}
