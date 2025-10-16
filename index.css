@@ -140,8 +140,8 @@ body {
 }
 
 .btn-accent:hover {
-  background-color: #e03800;
-  border-color: #e03800;
+  background-color: var(--accent);
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
@@ -194,6 +194,38 @@ body {
   object-fit: cover;
   display: block;
 }
+
+.creator-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.creator-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* or 1/1 if you prefer square */
+  flex-shrink: 0; /* Prevent the image from shrinking */
+  overflow: hidden;
+  border-radius: 12px 12px 0 0; /* matches card top corners */
+}
+
+.creator-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Ensure the card body doesn’t squeeze the image */
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
 
 .carousel-nav {
   position: absolute;
@@ -329,7 +361,7 @@ body {
 
 .social-links {
   position: absolute;
-  bottom: -3.125rem;
+  bottom: 0;
   left: 0;
   right: 0;
   display: flex;
@@ -340,9 +372,7 @@ body {
   transition: all 0.3s ease;
 }
 
-.creator-card:hover .social-links {
-  bottom: 0;
-}
+
 
 .social-icon {
   color: white;
@@ -442,21 +472,23 @@ section {
   }
 
   .display-4 {
-    font-size: 2rem;
+    font-size: 1.75rem; /* ~28px */
+    line-height: 1.2;
   }
 
   .lead {
-    font-size: 1.1rem;
+    font-size: 1rem; /* ~16px */
+  }
+
+  .btn {
+    font-size: 0.9rem; /* ~14px */
+    width: 100%;
   }
 
   .cta-buttons {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-  }
-
-  .btn {
-    width: 100%;
   }
 
   .video-slide {
@@ -470,7 +502,11 @@ section {
   }
 
   .creator-image-wrapper {
-    height: 10rem;
+    height: 25rem;
+  }
+
+  .card-body{
+    margin-bottom:10px;
   }
 
   section {
@@ -480,19 +516,43 @@ section {
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
+  .display-4 {
+    font-size: 2rem; /* ~32px */
+  }
+
+  .lead {
+    font-size: 1.1rem; /* ~17.6px */
+  }
+
   .video-slide {
     flex: 0 0 60%;
+  }
+
+  .creator-image-wrapper {
+    height: 35rem;
+  }
+
+  .card-body{
+    margin-bottom:10px;
   }
 }
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
   .navbar-brand {
-    font-size: 1.5rem;
+    font-size: 1.25rem; /* ~20px */
   }
 
   .display-4 {
-    font-size: 2.5rem;
+    font-size: 2.5rem; /* ~40px */
+  }
+
+  .lead {
+    font-size: 1.15rem; /* ~18.4px */
+  }
+
+  .btn {
+    font-size: 1rem; /* ~16px */
   }
 
   .video-slide {
@@ -500,12 +560,27 @@ section {
   }
 
   .creator-image-wrapper {
-    height: 180px;
+    height: 25rem;
+  }
+    .card-body{
+    margin-bottom:10px;
   }
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
+  .display-4 {
+    font-size: 3rem; /* ~48px */
+  }
+
+  .lead {
+    font-size: 1.25rem; /* ~20px */
+  }
+
+  .btn {
+    font-size: 1.05rem;
+  }
+
   .video-slide {
     flex: 0 0 30%;
   }
@@ -517,10 +592,21 @@ section {
   section {
     padding: 4rem 0;
   }
+    .card-body{
+    margin-bottom:10px;
+  }
 }
 
 /* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
+  .display-4 {
+    font-size: 3.5rem; /* ~56px */
+  }
+
+  .lead {
+    font-size: 1.3rem; /* ~21px */
+  }
+
   section {
     padding: 5rem 0;
   }
@@ -528,10 +614,21 @@ section {
   .hero {
     min-height: 100vh;
   }
+  .creator-image-wrapper {
+    height: 30rem;
+  }
 }
 
 /* XXL devices (larger desktops, 1400px and up) */
 @media (min-width: 1400px) {
+  .display-4 {
+    font-size: 4rem; /* ~64px */
+  }
+
+  .lead {
+    font-size: 1.35rem; /* ~22px */
+  }
+
   .container,
   .container-lg,
   .container-md,
@@ -541,6 +638,7 @@ section {
     max-width: 1320px;
   }
 }
+
 
 /* Platform Icons Styling */
 .platform-icon {
@@ -558,6 +656,8 @@ section {
   font-weight: 600;
   font-size: 0.9rem;
   color: white;
+
+
 }
 
 /* Responsive adjustments */

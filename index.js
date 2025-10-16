@@ -2,11 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Navbar scroll effect
   const navbar = document.querySelector(".navbar");
   window.addEventListener("scroll", function () {
-    if (window.scrollY > 50) {
-      navbar.classList.add("scrolled");
-    } else {
-      navbar.classList.remove("scrolled");
-    }
+    navbar.classList.toggle("scrolled", window.scrollY > 50);
   });
 
   // Contact Form
@@ -19,11 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const originalBtnText = submitBtn.textContent;
 
       // Validation
-      if (
-        !formData.get("name") ||
-        !formData.get("email") ||
-        !formData.get("message")
-      ) {
+      if (!formData.get("name") || !formData.get("email") || !formData.get("message")) {
         showAlert("Please fill in all required fields.", "danger");
         return;
       }
@@ -40,10 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (response.ok) {
-          const modal = new bootstrap.Modal(
-            document.getElementById("successModal")
-          );
-          modal.show();
+          new bootstrap.Modal(document.getElementById("successModal")).show();
           contactForm.reset();
         } else {
           showAlert("Submission failed. Please try again later.", "danger");
@@ -65,120 +54,55 @@ document.addEventListener("DOMContentLoaded", function () {
     alert.style.zIndex = 9999;
     alert.textContent = message;
     document.body.appendChild(alert);
-
-    setTimeout(() => {
-      alert.remove();
-    }, 3000);
-  }
-
-  // Carousel functionality
-  const track = document.getElementById("carouselTrack");
-  const slides = document.querySelectorAll(".video-slide");
-  const prevBtn = document.querySelector(".carousel-nav.left");
-  const nextBtn = document.querySelector(".carousel-nav.right");
-
-  if (track && slides.length > 0) {
-    let currentIndex = 0;
-    const visibleSlides = 3;
-
-    function updateCarousel() {
-      const slideWidth = slides[0].offsetWidth + 20;
-      track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-    }
-
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % (slides.length - visibleSlides + 1);
-      updateCarousel();
-    }
-
-    function prevSlide() {
-      currentIndex =
-        (currentIndex - 1 + (slides.length - visibleSlides + 1)) %
-        (slides.length - visibleSlides + 1);
-      updateCarousel();
-    }
-
-    // Event listeners
-    nextBtn.addEventListener("click", nextSlide);
-    prevBtn.addEventListener("click", prevSlide);
-
-    // Auto-advance
-    let carouselInterval = setInterval(nextSlide, 5000);
-
-    // Pause on hover
-    track.addEventListener("mouseenter", () => clearInterval(carouselInterval));
-    track.addEventListener(
-      "mouseleave",
-      () => (carouselInterval = setInterval(nextSlide, 5000))
-    );
-
-    // Initial setup
-    updateCarousel();
-    window.addEventListener("resize", updateCarousel);
+    setTimeout(() => alert.remove(), 3000);
   }
 
   // Scroll animations
-  const animateOnScroll = function () {
-    const elements = document.querySelectorAll(".animate-on-scroll");
-
-    elements.forEach((element) => {
-      const elementPosition = element.getBoundingClientRect().top;
-      const windowHeight = window.innerHeight;
-
-      if (elementPosition < windowHeight - 100) {
-        const animation = element.getAttribute("data-animation");
-        const delay = element.getAttribute("data-delay") || 0;
-
-        element.style.transitionDelay = `${delay}s`;
-        element.classList.add("animated", animation);
+  function animateOnScroll() {
+    document.querySelectorAll(".animate-on-scroll").forEach((el) => {
+      const rectTop = el.getBoundingClientRect().top;
+      if (rectTop < window.innerHeight - 100) {
+        const animation = el.dataset.animation;
+        const delay = el.dataset.delay || 0;
+        el.style.transitionDelay = `${delay}s`;
+        el.classList.add("animated", animation);
       }
     });
-  };
+  }
 
-  // Initialize on load
   animateOnScroll();
-
-  // Add scroll event listener
   window.addEventListener("scroll", animateOnScroll);
+
+  // About video speed
+  const aboutVideo = document.getElementById("aboutVideo");
+  if (aboutVideo) aboutVideo.playbackRate = 1.3;
 });
 
 // Mobile video autoplay fix
 function handleVideoAutoplay() {
   const video = document.querySelector(".hero-video");
+  if (!video) return;
 
-  // For iOS devices
+  // iOS inline play fix
   if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-    video.playsInline = true;
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "");
   }
 
-  // Try to play and catch errors
+  // Try autoplay, fallback on user interaction
   const playPromise = video.play();
-
-  if (playPromise !== undefined) {
-    playPromise.catch((error) => {
-      // Fallback: Play video on first touch
+  if (playPromise) {
+    playPromise.catch(() => {
       document.addEventListener(
         "touchstart",
-        function () {
-          video.play();
-        },
+        () => video.play(),
         { once: true }
       );
     });
   }
 }
 
-// Run when page loads
 document.addEventListener("DOMContentLoaded", handleVideoAutoplay);
-// Also run when page becomes visible (for mobile page refreshes)
-document.addEventListener("visibilitychange", function () {
-  if (document.visibilityState === "visible") {
-    handleVideoAutoplay();
-  }
-});
-document.addEventListener("DOMContentLoaded", function () {
-  const video = document.getElementById("aboutVideo");
-  video.playbackRate = 1.3;
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") handleVideoAutoplay();
 });
