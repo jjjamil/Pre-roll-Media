@@ -88,4 +88,7 @@ footer p {
   p.lead {
     font-size: 1rem;
   }
+  iframe{
+    width: auto;
+  }
 }
