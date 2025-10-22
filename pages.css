@@ -1,0 +1,91 @@
+:root {
+  --primary: #000000;
+  --secondary: #111111;
+  --accent: #7efe03;
+  --light: #f8f9fa;
+  --dark: #212529;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+/* Layout fix */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* pushes footer down */
+}
+
+/* Navigation */
+.navbar {
+  background-color: var(--primary) !important;
+  border-bottom: 2px solid var(--accent);
+  transition: all 0.3s ease;
+  padding: 0.8rem 1rem;
+}
+
+/* About Section */
+#about {
+  padding: 3rem 0;
+}
+
+#about img {
+  aspect-ratio: 4 / 4; /* slightly wider than tall */
+  object-fit:fill;
+  border-radius: 12px; /* optional: smoother corners */
+}
+
+iframe{
+    margin-top: 30px;
+}
+
+.VinFast{
+    margin-top: -15px;
+}
+
+
+/* Footer */
+footer {
+  background-color: #000;
+  color: #fff;
+  padding: 1.5rem 0;
+  text-align: center;
+  margin-top: auto; /* ensures footer stays at bottom */
+}
+
+footer p {
+  margin: 0.25rem 0;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  #about {
+    padding: 2rem 0;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  p.lead {
+    font-size: 1rem;
+  }
+}
