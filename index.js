@@ -106,3 +106,31 @@ document.addEventListener("DOMContentLoaded", handleVideoAutoplay);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") handleVideoAutoplay();
 });
+
+
+// Counter animation function
+function animateCounter(id, target, duration) {
+  const el = document.getElementById(id);
+  let start = 0;
+  const stepTime = Math.abs(Math.floor(duration / target));
+  const timer = setInterval(() => {
+    start++;
+    el.textContent = start;
+    if (start >= target) clearInterval(timer);
+  }, stepTime);
+}
+
+// Trigger animation only when section is visible
+const reachSection = document.getElementById('reach');
+let hasAnimated = false;
+
+window.addEventListener('scroll', () => {
+  const rect = reachSection.getBoundingClientRect();
+  const inView = rect.top < window.innerHeight && rect.bottom >= 0;
+
+  if (inView && !hasAnimated) {
+    hasAnimated = true;
+    animateCounter('impressionsCount', 133, 5000);
+    animateCounter('viewsCount', 8, 5000);
+  }
+});

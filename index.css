@@ -347,6 +347,18 @@ body {
   display: block; /* Remove any default spacing */
 }
 
+.partner-logo {
+  width: 200px;
+  height: 150px;
+  object-fit: contain; 
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.partner-logo:hover {
+  transform: scale(1.05);
+}
+
 .creator-image.contain {
   object-fit: contain; /* Shows full image without cropping */
   background: white; /* Add background if image doesn't fill space */
@@ -357,6 +369,21 @@ body {
 
 .creator-card:hover .creator-image {
   transform: scale(1.05);
+}
+
+.brandedContainer  p{
+  margin-bottom: 100px !important;
+}
+
+#reach {
+  background: #f8f9fa;
+}
+#reach h4 {
+  margin-bottom: 0.5rem;
+}
+.display-4 {
+  font-size: 4rem;
+  line-height: 1;
 }
 
 .social-links {
@@ -671,6 +698,6 @@ section {
   }
 }
 
-#whyWorkWithUs {
+#globalReach {
   color: white;
 }
