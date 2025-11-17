@@ -81,6 +81,15 @@ body {
   z-index: 0;
 }
 
+#shows p{
+  margin-bottom: 2rem !important;
+}
+
+.swiper .swiper-pagination {
+  padding-top: 2rem !important;
+  position:relative;
+}
+
 #shows .container {
   position: relative;
   z-index: 1; /* keep text above background */
