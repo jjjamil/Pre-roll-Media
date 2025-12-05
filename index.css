@@ -58,6 +58,7 @@ body {
   color: white;
 }
 
+
 #shows {
   position: relative;
   overflow: hidden; /* keeps bg inside */
@@ -95,20 +96,17 @@ body {
   z-index: 1; /* keep text above background */
 }
 
-.hero-image {
+.hero-video {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  /* Fix for iOS 10+ */
+  object-fit: cover;       /* fills entire hero */
+  object-position: center; /* centers the video */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  background-image: url("https://i.imgur.com/d21fzdi.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  z-index: -2;             /* behind overlay and content */
 }
 
 .hero-overlay {
@@ -117,8 +115,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 1;
+  background: rgba(0, 0, 0, 0.75); /* same dark overlay */
+  z-index: -1;                       /* above video, behind text */
 }
 
 .hero .container {
