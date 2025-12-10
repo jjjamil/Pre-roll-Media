@@ -112,7 +112,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.40); /* same dark overlay */
+  background: rgba(0, 0, 0, 0.30); /* same dark overlay */
   z-index: -1;                       /* above video, behind text */
 }
 
