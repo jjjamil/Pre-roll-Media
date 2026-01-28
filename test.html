@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  @media (max-width: 768px) {
+    section div[style*="display: flex; flex-wrap: wrap;"] > div {
+      flex: 1 1 100% !important;
+      max-width: 100% !important;
+      margin-top:70px !important;
+    }
+    section h2 { font-size: 32px !important; }
+    section p { font-size: 16px !important; }
+    .package-card { padding: 25px 15px !important; }
+  }
+  
+  /* Cart Styles */
+  .cart-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+  }
+  .cart-button {
+    background: linear-gradient(135deg, #4a6bff, #6b8cff);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(74, 107, 255, 0.4);
+    transition: all 0.3s;
+    position: relative;
+  }
+  .cart-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(74, 107, 255, 0.5);
+  }
+  .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff6b81;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .cart-panel {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 450px;
+    max-width: 100vw;
+    height: 70vh;
+    background: white;
+    box-shadow: -2px 0 20px rgba(0,0,0,0.2);
+    transform: translateX(100%);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px 0 0 0;
+  }
+  .cart-panel.open {
+    transform: translateX(0);
+  }
+  .cart-header {
+    padding: 20px;
+    background: linear-gradient(135deg, #4a6bff, #6b8cff);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 20px 0 0 0;
+  }
+  .cart-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+  }
+  .cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #f8f9ff;
+    border-radius: 10px;
+    border: 1px solid #e6ecff;
+  }
+  .cart-item-info {
+    flex: 1;
+  }
+  .cart-item-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  .cart-item-price {
+    color: #4a6bff;
+    font-weight: 700;
+  }
+  .cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .qty-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: #4a6bff;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qty-btn:hover {
+    background: #3a5bef;
+  }
+  .qty-display {
+    min-width: 30px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .remove-btn {
+    background: #ff6b81;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .cart-footer {
+    padding: 20px;
+    border-top: 2px solid #e6ecff;
+    background: #fafbff;
+  }
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .contact-sales-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #2bc396, #36d1a8);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .contact-sales-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(43, 195, 150, 0.3);
+  }
+  .empty-cart {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+  }
+  @media (max-width: 768px) {
+    .cart-panel { width: 100vw; }
+  }
+</style>
+</head>
+<body>
+
+<section style="padding: 30px 20px; background-color: #fafafa; margin-bottom:-100px;" >
+  <div style="max-width: 1200px; margin: 0 auto;">
+    
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 60px; margin-top:40px">
+      <h2 style="font-size: 42px; font-weight: 800; color: #333; margin-bottom: 15px; letter-spacing: -0.5px;">Our Podcast Packages</h2>
+      <p style="font-size: 18px; color: #666; max-width: 700px; margin: 0 auto; line-height: 1.6;">Professional editing solutions tailored to your podcasting needs</p>
+    </div>
+    
+    <!-- Packages Grid -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 25px;">
+      
+      <!-- Audio Bundle -->
+      <div style="flex: 1 1 280px; max-width: 100%; min-width: 280px; position: relative;">
+        <div class="package-card" style="background: linear-gradient(145deg, #ffffff, #f8f9ff); border-radius: 18px; padding: 35px 25px; height: 100%; box-shadow: 0 8px 25px rgba(91, 134, 255, 0.08); border: 1px solid #e6ecff; transition: all 0.3s ease; display: flex; flex-direction: column;">
+          <div style="margin-bottom: 20px;">
+            <div style="background-color: #f0f5ff; color: #4a6bff; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-block; margin-bottom: 15px;">AUDIO ONLY</div>
+            <h3 style="font-size: 26px; font-weight: 800; color: #333; margin-bottom: 5px;">Audio Bundle</h3>
+            <div style="font-size: 15px; color: #777; margin-bottom: 20px;">Perfect for audio-focused podcasters</div>
+          </div>
+          
+          <div style="margin-bottom: 25px; padding: 15px; background-color: #f8fbff; border-radius: 12px;">
+            <div style="font-size: 14px; color: #999; margin-bottom: 5px;">
+              from <span style="text-decoration: line-through;">$300.00</span> to:
+            </div>
+            <div style="font-size: 42px; font-weight: 800; color: #4a6bff; margin-bottom: 5px;">$269.99</div>
+          </div>
+          
+          <div style="flex-grow: 1; margin-bottom: 25px;">
+            <div style="background-color: #f8fbff; padding: 16px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #4a6bff;">
+              <div style="font-size: 14px; color: #555; font-weight: 600; margin-bottom: 5px;">Includes:</div>
+              <div style="font-size: 13px; color: #777;">4 audio podcasts • Max 1 hr output • 48 hr TAT</div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0f5ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #4a6bff;">
+                  <div style="font-size: 12px; color: #4a6bff; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Audio cleaning & cutting</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0f5ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #4a6bff;">
+                  <div style="font-size: 12px; color: #4a6bff; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Noise reduction</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0f5ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #4a6bff;">
+                  <div style="font-size: 12px; color: #4a6bff; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Audio leveling & mastering</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0f5ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #4a6bff;">
+                  <div style="font-size: 12px; color: #4a6bff; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Publishing support</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="text-align: center;">
+            <button class="select-btn add-to-cart" data-name="Audio Bundle" data-price="269.99" style="background: linear-gradient(135deg, #4a6bff, #6b8cff); color: white; font-weight: 700; padding: 14px 24px; border-radius: 10px; cursor: pointer; transition: all 0.3s; border: none; font-size: 15px; letter-spacing: 0.3px; width: 100%;">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Video Bundle -->
+      <div style="flex: 1 1 280px; max-width: 100%; min-width: 280px; position: relative;">
+        <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #36d1a8, #2bc396); color: white; font-size: 12px; font-weight: 800; padding: 6px 22px; border-radius: 20px; z-index: 10; letter-spacing: 0.5px; white-space: nowrap; box-shadow: 0 4px 12px rgba(43, 195, 150, 0.3);">MOST POPULAR</div>
+        
+        <div class="package-card" style="background: linear-gradient(145deg, #ffffff, #f5fffb); border-radius: 18px; padding: 45px 25px 35px; height: 100%; box-shadow: 0 8px 25px rgba(43, 195, 150, 0.1); border: 1px solid #d4f5ea; transition: all 0.3s ease; display: flex; flex-direction: column;">
+          <div style="margin-bottom: 20px;">
+            <div style="background-color: #f0faf5; color: #2bc396; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-block; margin-bottom: 15px;">VIDEO + AUDIO</div>
+            <h3 style="font-size: 26px; font-weight: 800; color: #333; margin-bottom: 5px;">Video Bundle</h3>
+            <div style="font-size: 15px; color: #777; margin-bottom: 20px;">Complete video podcast solution</div>
+          </div>
+          
+          <div style="margin-bottom: 25px; padding: 15px; background-color: #f8fffc; border-radius: 12px;">
+            <div style="font-size: 14px; color: #999; margin-bottom: 5px;">
+              from <span style="text-decoration: line-through;">$540.00</span> to:
+            </div>
+            <div style="font-size: 42px; font-weight: 800; color: #2bc396; margin-bottom: 5px;">$499.99</div>
+          </div>
+          
+          <div style="flex-grow: 1; margin-bottom: 25px;">
+            <div style="background-color: #f8fffc; padding: 16px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #2bc396;">
+              <div style="font-size: 14px; color: #555; font-weight: 600; margin-bottom: 5px;">Includes:</div>
+              <div style="font-size: 13px; color: #777;">4 video podcasts • Max 1 hr output • 72 hr TAT • 1080p</div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0faf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #2bc396;">
+                  <div style="font-size: 12px; color: #2bc396; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Everything in Audio Bundle</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0faf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #2bc396;">
+                  <div style="font-size: 12px; color: #2bc396; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Basic video transitions</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0faf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #2bc396;">
+                  <div style="font-size: 12px; color: #2bc396; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Video cutting & stitching</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #f0faf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #2bc396;">
+                  <div style="font-size: 12px; color: #2bc396; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Standard editing</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="text-align: center;">
+            <button class="select-btn add-to-cart" data-name="Video Bundle" data-price="499.99" style="background: linear-gradient(135deg, #2bc396, #36d1a8); color: white; font-weight: 700; padding: 14px 24px; border-radius: 10px; cursor: pointer; transition: all 0.3s; border: none; font-size: 15px; letter-spacing: 0.3px; width: 100%;">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Video Plus Bundle -->
+      <div style="flex: 1 1 280px; max-width: 100%; min-width: 280px; position: relative;">
+        <div class="package-card" style="background: linear-gradient(145deg, #ffffff, #fff5f8); border-radius: 18px; padding: 35px 25px; height: 100%; box-shadow: 0 8px 25px rgba(255, 107, 129, 0.08); border: 1px solid #ffe6ec; transition: all 0.3s ease; display: flex; flex-direction: column;">
+          <div style="margin-bottom: 20px;">
+            <div style="background-color: #fff0f5; color: #ff6b81; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-block; margin-bottom: 15px;">PREMIUM VIDEO + AUDIO</div>
+            <h3 style="font-size: 26px; font-weight: 800; color: #333; margin-bottom: 5px;">Video Plus Bundle</h3>
+            <div style="font-size: 15px; color: #777; margin-bottom: 20px;">Professional-grade video editing</div>
+          </div>
+          
+          <div style="margin-bottom: 25px; padding: 15px; background-color: #fff8fa; border-radius: 12px;">
+            <div style="font-size: 14px; color: #999; margin-bottom: 5px;">
+              from <span style="text-decoration: line-through;">$720.00</span> to:
+            </div>
+            <div style="font-size: 42px; font-weight: 800; color: #ff6b81; margin-bottom: 5px;">$649.99</div>
+          </div>
+          
+          <div style="flex-grow: 1; margin-bottom: 25px;">
+            <div style="background-color: #fff8fa; padding: 16px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #ff6b81;">
+              <div style="font-size: 14px; color: #555; font-weight: 600; margin-bottom: 5px;">Includes:</div>
+              <div style="font-size: 13px; color: #777;">4 video podcasts • Max 1 hr output • 72 hr TAT • 2K/4K</div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #fff0f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #ff6b81;">
+                  <div style="font-size: 12px; color: #ff6b81; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Everything in Video Bundle</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #fff0f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #ff6b81;">
+                  <div style="font-size: 12px; color: #ff6b81; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Heavy transitions & effects</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #fff0f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #ff6b81;">
+                  <div style="font-size: 12px; color: #ff6b81; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">Advanced video editing</div>
+              </div>
+              <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <div style="width: 24px; height: 24px; background-color: #fff0f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; border: 1px solid #ff6b81;">
+                  <div style="font-size: 12px; color: #ff6b81; font-weight: bold;">✓</div>
+                </div>
+                <div style="font-size: 14px; color: #555;">2K / 4K resolution</div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="text-align: center;">
+            <button class="select-btn add-to-cart" data-name="Video Plus Bundle" data-price="649.99" style="background: linear-gradient(135deg, #ff6b81, #ff8fa3); color: white; font-weight: 700; padding: 14px 24px; border-radius: 10px; cursor: pointer; transition: all 0.3s; border: none; font-size: 15px; letter-spacing: 0.3px; width: 100%;">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Add-ons Section -->
+    <div style="max-width: 100%; margin-top: 100px;">
+      <div style="background: linear-gradient(145deg, #ffffff, #fffdf5); border-radius: 18px; padding: 35px 25px; box-shadow: 0 8px 25px rgba(255, 184, 0, 0.08); border: 1px solid #ffe7a3;">
+        <div style="margin-bottom: 25px;">
+          <div style="background-color: #fff8e1; color: #ffb800; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-block; margin-bottom: 15px;">ADD-ONS</div>
+          <h3 style="font-size: 26px; font-weight: 800; color: #333; margin-bottom: 5px;">Other Add-ons</h3>
+          <div style="font-size: 15px; color: #777;">Enhance your podcast with optional extras</div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:14px;">
+            <thead>
+              <tr style="background-color:#fff8e1;">
+                <th style="padding:12px; text-align:left; color:#b08900;">Service</th>
+                <th style="padding:12px; text-align:left; color:#b08900;">Details</th>
+                <th style="padding:12px; text-align:right; color:#b08900;">Price</th>
+                <th style="padding:12px; text-align:center; color:#b08900;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="addons-list">
+              <!-- Add-ons will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Note -->
+    <div style="text-align: center; margin-top: 100px; padding: 24px; background: linear-gradient(135deg, #f0f8ff, #f5faff); border-radius: 16px; max-width: 800px; margin-left: auto; margin-right: auto; border: 1px solid #e1eeff;">
+      <div style="font-size: 16px; color: #555; line-height: 1.6;">
+        <span style="font-weight: 700; color: #4a6bff;">All plans include:</span> 24/7 Podcast Manager Support • Professional quality assurance • Multi-format output delivery
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Floating Cart Button -->
+<div class="cart-float">
+  <button class="cart-button" id="cart-toggle">
+    🛒
+    <span class="cart-badge" id="cart-count">0</span>
+  </button>
+</div>
+
+<!-- Cart Panel -->
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3 style="margin: 0; font-size: 20px;">Your Selection</h3>
+    <button class="cart-close" id="cart-close">×</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="empty-cart">
+      <div style="font-size: 48px; margin-bottom: 10px;">🛒</div>
+      <div>Your cart is empty</div>
+      <div style="font-size: 13px; margin-top: 5px;">Add packages or add-ons to get started</div>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Total ($USD):</span>
+      <span style="color: #4a6bff;" id="cart-total">$0.00</span>
+    </div>
+    <button class="contact-sales-btn" id="contact-sales">Contact Sales</button>
+  </div>
+</div>
+
+<script>
+// Add-ons data
+const addons = [
+  { name: "Audio Episode Edit", price: 75.00, details: "Audio Cleaning, Cutting, Removal of unnecessary sounds and fillerwords<br>Noise reduction and compression<br>Audio leveling<br>Mixing, stitching, and mastering<br>Max 1 hour" },
+  { name: "Video Episode Edit: Standard", price: 135.00, details: "Audio Cleaning, Cutting, Removal of unnecessary sounds and fillerwords<br>Noise reduction and compression<br>Audio leveling<br>Mixing, stitching, and mastering<br>Inclusive of Basic Transition, Cutting, Stitching of the video<br>1080p Output<br>Max 1 hour" },
+  { name: "Video Episode Edit: Heavy Editing", price: 180.00, details: "Audio Cleaning, Cutting, Removal of unnecessary sounds and fillerwords<br>Noise reduction and compression<br>Audio leveling<br>Mixing, stitching, and mastering<br>Inclusive of Heavy Transition, Cutting, Stitching of the video<br>Video/Photo Overlay, Brolls, Sound effects etc.<br>4k Output<br>Max 1 hour" },
+  { name: "Subtitling for Video Episodes", price: 75.00, details: "Accurate, on-brand captions added to full video episodes <br> Max 1 Hour" },
+  { name: "Sound Imaging (Intro & Outro)", price: 180.00, details: "30-sec intro + 30-sec outro<br>Audio & video format<br>Uses royalty-free music" },
+  { name: "Podcast Trailer", price: 50.00, details: "Max 1 minute<br>Audio & video format<br>Highlights theme & host" },
+  { name: "Cover Art Creation (One-time)", price: 50.00, details: "Custom-designed cover<br>Optimized for streaming platforms" },
+  { name: "Show Notes (per episode)", price: 25.00, details: "Episode summaries + SEO-friendly copy" },
+  { name: "Transcription (per episode)", price: 25.00, details: "Full transcription for accessibility" },
+  { name: "Logo Design (One Time)", price: 100.00, details: "Custom-designed podcast logo for branding and identity <br> Delivered in high-resolution + transparent formats for digital use" },
+  { name: "Audiogram", price: 10.00, details: "Static photo with waveform + captions<br>Short audio clips (max 60 seconds)" },
+  { name: "Quote Card", price: 10.00, details: "Highlights key quotes or insights<br>Branded, shareable graphics" },
+  { name: "Episode Art", price: 15.00, details: "Custom artwork per episode<br>Features guest name, host, and episode title<br>Used to promote upcoming episodes<br>Podmachine creates new template (2 studies for approval)<br>*No Cartoonization" },
+  { name: "Videograms / Social Media Snippets", price: 25.00, details: "Short video clips (max 60 seconds)<br>Basic editing for vertical dimensions<br>Optimized for TikTok, IG Reels, FB Reels, YouTube Shorts" },
+  { name: "Videograms / Social Media Snippets (Heavy Editing)", price: 40.00, details: "Heavy Editing" },
+  { name: "Chapter Clip (5–10 min Topic Highlight)", price: 40.00, details: "5–10 minute extracted topic highlight<br>Focused on key insight or discussion<br>Optimized for YouTube or social media" },
+  { name: "YouTube Thumbnail", price: 20.00, details: "Eye-catching thumbnail<br>Bold text & engaging visuals<br>YouTube-optimized dimensions" }
+];
+
+// Cart state
+let cart = {};
+
+// Initialize add-ons table
+function initAddons() {
+  const tbody = document.getElementById('addons-list');
+  tbody.innerHTML = addons.map((addon, idx) => `
+    <tr>
+      <td style="padding:12px; font-weight:600; vertical-align:top;">${addon.name}</td>
+      <td style="padding:12px; color:#777;">${addon.details}</td>
+      <td style="padding:12px; text-align:right; font-weight:600;">${addon.price.toFixed(2)}</td>
+      <td style="padding:12px; text-align:center;">
+        <button class="add-to-cart" data-name="${addon.name}" data-price="${addon.price}" 
+          style="background: linear-gradient(135deg, #ffb800, #ffc933); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">
+          Add to Cart
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Add to cart
+function addToCart(name, price) {
+  if (cart[name]) {
+    cart[name].quantity++;
+  } else {
+    cart[name] = { price: parseFloat(price), quantity: 1 };
+  }
+  updateCart();
+}
+
+// Update cart display
+function updateCart() {
+  const cartItems = document.getElementById('cart-items');
+  const cartCount = document.getElementById('cart-count');
+  const cartTotal = document.getElementById('cart-total');
+  
+  const itemCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+  const total = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  cartCount.textContent = itemCount;
+  cartTotal.textContent = `${total.toFixed(2)}`;
+  
+  if (itemCount === 0) {
+    cartItems.innerHTML = `
+      <div class="empty-cart">
+        <div style="font-size: 48px; margin-bottom: 10px;">🛒</div>
+        <div>Your cart is empty</div>
+        <div style="font-size: 13px; margin-top: 5px;">Add packages or add-ons to get started</div>
+      </div>
+    `;
+  } else {
+    cartItems.innerHTML = Object.entries(cart).map(([name, item]) => `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${name}</div>
+          <div class="cart-item-price">${item.price.toFixed(2)} each</div>
+        </div>
+        <div class="cart-item-controls">
+          <button class="qty-btn" onclick="decreaseQty('${name}')">−</button>
+          <div class="qty-display">${item.quantity}</div>
+          <button class="qty-btn" onclick="increaseQty('${name}')">+</button>
+          <button class="remove-btn" onclick="removeItem('${name}')">Remove</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// Quantity controls
+function increaseQty(name) {
+  cart[name].quantity++;
+  updateCart();
+}
+
+function decreaseQty(name) {
+  if (cart[name].quantity > 1) {
+    cart[name].quantity--;
+  } else {
+    delete cart[name];
+  }
+  updateCart();
+}
+
+function removeItem(name) {
+  delete cart[name];
+  updateCart();
+}
+
+// Toggle cart panel
+function toggleCart() {
+  document.getElementById('cart-panel').classList.toggle('open');
+}
+
+// Contact sales
+function contactSales() {
+  const items = Object.entries(cart).map(([name, item]) => 
+    `${name} x${item.quantity} - ${(item.price * item.quantity).toFixed(2)}`
+  ).join('\n');
+  
+  const total = Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  const message = `I'm interested in the following services:\n\n${items}\n\nTotal: ${total.toFixed(2)}\n\nPlease contact me with more information.`;
+  
+  // Option 1: Open email client
+  const mailtoLink = `mailto:consultation@podmachine.com?subject=Podcast Services Inquiry&body=${encodeURIComponent(message)}`;
+  window.location.href = mailtoLink;
+  
+  // Option 2: Show confirmation (comment out mailto above to use this)
+  // alert(`Thank you for your interest!\n\n${message}\n\nOur sales team will contact you shortly.`);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  initAddons();
+  
+  // Add to cart buttons
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('add-to-cart')) {
+      const name = e.target.dataset.name;
+      const price = e.target.dataset.price;
+      addToCart(name, price);
+      
+      // Visual feedback
+      e.target.textContent = 'Added!';
+      setTimeout(() => {
+        e.target.textContent = e.target.closest('td') ? 'Add to Cart' : 'Add to Cart';
+      }, 1000);
+    }
+  });
+  
+  // Cart toggle
+  document.getElementById('cart-toggle').addEventListener('click', toggleCart);
+  document.getElementById('cart-close').addEventListener('click', toggleCart);
+  
+  // Contact sales
+  document.getElementById('contact-sales').addEventListener('click', contactSales);
+  
+  // Card hover effects
+  const cards = document.querySelectorAll('.package-card');
+  cards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-12px)';
+      this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+    });
+  });
+  
+  // Button hover effects
+  const buttons = document.querySelectorAll('.select-btn');
+  buttons.forEach(button => {
+    button.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
+    });
+    
+    button.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = 'none';
+    });
+  });
+});
+</script>
+
+</body>
+</html>
